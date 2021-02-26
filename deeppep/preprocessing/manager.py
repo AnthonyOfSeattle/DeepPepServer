@@ -4,17 +4,40 @@ from fastapi import HTTPException
 from .encoder import SequenceEncoder
 
 
-GLOBAL_VOCAB = {"X": 0,  "A": 1,  "C": 2,  
-                "D": 3,  "E": 4,  "F": 5,  
-                "G": 6,  "H": 7,  "I": 8,  
-                "K": 9,  "L": 10, "M": 11, 
-                "N": 12, "P": 13, "Q": 14, 
-                "R": 15, "S": 16, "T": 17, 
-                "V": 18, "W": 19, "Y": 20}
+GLOBAL_VOCAB = {
+    "X": 0,
+    "n[42]": 1,
+    "A": 2,
+    "C": 3,
+    "C[57]": 3,
+    "D": 4,
+    "E": 5,
+    "F": 6,
+    "G": 7,
+    "H": 8,
+    "I": 9,
+    "K": 10,
+    "L": 11,
+    "M": 12,
+    "N": 13,
+    "P": 14,
+    "Q": 15,
+    "R": 16,
+    "S": 17,
+    "T": 18,
+    "U": 19,
+    "V": 20,
+    "W": 21,
+    "Y": 22,
+    "M[16]": 23,
+    "S[80]": 24,
+    "T[80]": 25,
+    "Y[80]": 26
+    }
 
 
 class PreprocessingManager:
-    def __init__(self, pattern, vocab=None, max_vocab_dim=20, **kwargs):
+    def __init__(self, pattern, vocab=None, max_vocab_dim=26, **kwargs):
         self.pattern = pattern
         
         self.max_vocab_dim = max_vocab_dim
