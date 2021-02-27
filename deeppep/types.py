@@ -6,28 +6,21 @@ from pydantic import BaseModel
 #########################
 
 class EncoderConfig(BaseModel):
-    pattern : Optional[str] = "[A-Z][^A-Z]*"
+    pattern : Optional[str] = "[A-Zn][^A-Zn]*"
     vocab   : Optional[dict] = {}
 
-##################
-# Request Models #
-##################
+#################
+# Request Model #
+#################
 
 class PeptideSet(BaseModel):
     peptides: List[str]
+    charges : Optional[List[int]] = []
 
-class ExtendedPeptideSet(BaseModel):
-    peptides: List[str]
-    charges : List[int]
+##################
+# Response Model #
+##################
 
-###################
-# Response Models #
-###################
-
-class Prediction1D(BaseModel):
-    model: str
-    values: List[float]
-
-class Prediction2D(BaseModel):
+class Prediction(BaseModel):
     model: str
     values: List[List[float]]
