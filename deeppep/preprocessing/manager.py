@@ -3,7 +3,6 @@ from itertools import chain
 from fastapi import HTTPException
 from .encoder import SequenceEncoder
 
-
 GLOBAL_VOCAB = {
     "X": 0,
     "n[42]": 1,
@@ -30,14 +29,10 @@ GLOBAL_VOCAB = {
     "W": 21,
     "Y": 22,
     "M[16]": 23,
-    "S[80]": 24,
-    "T[80]": 25,
-    "Y[80]": 26
-    }
-
+}
 
 class PreprocessingManager:
-    def __init__(self, pattern, vocab=None, max_vocab_dim=26, **kwargs):
+    def __init__(self, pattern, vocab=None, max_vocab_dim=23, **kwargs):
         self.pattern = pattern
         
         self.max_vocab_dim = max_vocab_dim
