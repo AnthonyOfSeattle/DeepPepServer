@@ -1,34 +1,59 @@
 from fastapi import FastAPI
 from .types import *
-from .preprocessing import PreprocessingManager
+from .preprocessing import (
+        DEFAULT_PREPROCESSING_CONFIG, 
+        merge_configs,
+        PreprocessingManager
+        )
 from .prediction import PREBUILT_CONFIG, PredictionManager
 
 app = FastAPI()
 
-@app.get("/config/encoder")
-async def get_config_encoder(enc_conf: EncoderConfig):
-    config = {"pattern"  : "[A-Zn][^A-Zn]*"}
-    config.update(enc_conf.__dict__)
+@app.get("/config/preprocessing")
+async def get_preprocessing_config():
+    pre_config = DEFAULT_PREPROCESSING_CONFIG.copy()
 
-    return config
+    return pre_config
+
+@app.get("/config/preprocessing/{model}")
+async def get_model_preprocessing_config(model: str):
+    if model in PREBUILT_CONFIG["aliases"]:
+        model_config = PREBUILT_CONFIG["aliases"][model]
+    else:
+        model_config = PREBUILT_CONFIG[model]
+
+    pre_config = DEFAULT_PREPROCESSING_CONFIG.copy()
+    pre_config = merge_configs(pre_config, 
+                               model_config.get("pre_config", {})
+                               )
+
+    return pre_config
 
 @app.post("/predict/{model}", response_model=Prediction)
-async def predict(model: str, enc_conf: EncoderConfig, input: PeptideSet):
-    # Preprocess data
-    model_config = PREBUILT_CONFIG["__default__"]
-    model_config.update(PREBUILT_CONFIG[model])
+async def predict(model: str, input: PredictionInput):
+    # Load Model
+    if model in PREBUILT_CONFIG["aliases"]:
+        model_config = PREBUILT_CONFIG["aliases"][model]
+    else:
+        model_config = PREBUILT_CONFIG[model]
     pred_man = PredictionManager(model_name=model,
                                  config_path=model_config["config_path"],
                                  weight_path=model_config["weight_path"])
 
-    enc_conf = enc_conf.__dict__
-    enc_conf["max_vocab_dim"] = model_config["max_vocab_dim"]
-    enc_conf["seq_len"] = model_config["seq_len"]
-    enc_conf["one_hot"] = model_config["one_hot"]
-    prep_man = PreprocessingManager(**enc_conf)
+    # Load Preprocessor
+    pre_config = DEFAULT_PREPROCESSING_CONFIG.copy()
+    pre_config = merge_configs(pre_config,
+                               model_config.get("pre_config", {})
+                               )
+    if input.config is not None:
+        pre_config = merge_configs(pre_config,
+                                   input.config
+                                   )
+    prep_man = PreprocessingManager(**pre_config)
 
-    enc_peptides = prep_man.preprocess(input.peptides)
-    pred = pred_man.predict(enc_peptides)
+    # Run Pipeline
+    enc_peptides = prep_man.preprocess(input.peptides.sequences)
+    pred = pred_man.predict(enc_peptides).tolist()
 
-    return {"model"  : model,
-            "values" : pred.tolist()}
+    return {"values" : pred}
+

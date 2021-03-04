@@ -1,26 +1,25 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
-#########################
-# Preprocressing Config #
-#########################
-
-class EncoderConfig(BaseModel):
-    pattern : Optional[str] = "[A-Zn][^A-Zn]*"
-    vocab   : Optional[dict] = {}
-
 #################
 # Request Model #
 #################
 
+class Config(BaseModel):
+    pattern : Optional[str] = "[A-Zn][^A-Zn]*"
+    vocab   : Optional[dict] = {}
+
 class PeptideSet(BaseModel):
-    peptides: List[str]
-    charges : Optional[List[int]] = []
+    sequences : List[str]
+    charges   : Optional[List[int]] = []
+
+class PredictionInput(BaseModel):
+    config  : Optional[Config] = None
+    peptides: PeptideSet
 
 ##################
 # Response Model #
 ##################
 
 class Prediction(BaseModel):
-    model: str
     values: List[List[float]]
