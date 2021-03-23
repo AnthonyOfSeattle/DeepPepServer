@@ -25,7 +25,17 @@ PREBUILT_CONFIG = {
         "allow_encoding" : False,
         "public"         : True
         },
+    "charge_gru_128" : {
+        "pre_config"     : {},
+        "config_path"    : "deeppep/prediction/models/charge_gru_128.config.json",
+        "weight_path"    : "deeppep/prediction/models/charge_gru_128.weights.h5",
+        "property"       : "charge_state",
+        "output_labels"  : ["z1", "z2", "z3", "z4", "z5"],
+        "allow_encoding" : True,
+        "public"         : True
+        },
+
 }
 
 PREBUILT_CONFIG["phospho_rt"] = PREBUILT_CONFIG["phospho_rt_gru_512"]
-
+PREBUILT_CONFIG["charge"] = PREBUILT_CONFIG["charge_gru_128"]
