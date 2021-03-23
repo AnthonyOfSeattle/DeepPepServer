@@ -6,6 +6,7 @@ from .preprocessing import (
         PreprocessingManager
         )
 from .prediction import PREBUILT_CONFIG, PredictionManager
+from .manager import PipelineManager
 
 app = FastAPI(
         title="Deep Peptide Sever",
@@ -72,7 +73,7 @@ async def get_prediction_api_options(
         description="A peptide property can be specified to restrict"
                     " options to models that predict that property."
         )
-    ): 
+    ):
     return {}
 
 @app.get("/models/{model_name}",
@@ -89,6 +90,10 @@ async def get_model(
         tags=["models"],
         response_model=InternalConfig)
 async def get_model_preprocessor_config(
+        model_name: str = Path(
+        ..., title="Model Name",
+        description="Name of model to download."
+        ),
         config: Optional[UserConfig] = Body(
             None, title="User Supplied Config",
             description="Configuration parameters to patch over defaults",
@@ -96,11 +101,12 @@ async def get_model_preprocessor_config(
                      "vocab"   : {"M<ox>" : 23}}
             )
         ):
-    return {}
+    pipeline = PipelineManager(model_name, config)
+    return pipeline.pre_config
 
 @app.post("/models/{model_name}/{action}",
-          tags=["models"], 
-          response_model=List[dict])
+          tags=["models"])#, 
+          #response_model=List[dict])
 async def post_peptides_to_model(
     model_name: str = Path(
         ..., title="Model Name",
@@ -121,5 +127,7 @@ async def post_peptides_to_model(
             }
         )
     ):
-    return {}
+    pipeline = PipelineManager(model_name, model_input.config)
+    output = pipeline.run(model_input.peptides, action)
+    return output
 
