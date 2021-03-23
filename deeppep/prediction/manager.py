@@ -1,6 +1,8 @@
 import os
+import tensorflow as tf
 from tensorflow.keras import models
 
+tf.get_logger().setLevel('ERROR')
 
 class PredictionManager:
     def __init__(self, model_name, config_path, weight_path):
