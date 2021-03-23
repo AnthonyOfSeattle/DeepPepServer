@@ -3,8 +3,8 @@ from .manager import GLOBAL_VOCAB, PreprocessingManager
 DEFAULT_PREPROCESSING_CONFIG = {
     "pattern"       : "[A-Zn][^A-Zn]*",
     "vocab"         : GLOBAL_VOCAB,
-    "max_vocab_dim" : 24,
-    "seq_len"       : 75,
+    "max_vocab_dim" : 23,
+    "seq_len"       : 50,
     "one_hot"       : False
 }
 
