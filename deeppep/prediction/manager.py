@@ -1,6 +1,6 @@
 import os
 import tensorflow as tf
-from tensorflow.keras import models
+from tensorflow.keras import models, backend
 
 tf.get_logger().setLevel('ERROR')
 
@@ -10,6 +10,9 @@ class PredictionManager:
         self.config_path = self._check_path(config_path)
         self.weight_path = self._check_path(weight_path)
         self.model = self._load_model()
+
+    def __del__(self):
+        backend.clear_session()
 
     def _path_not_found_message(self, path):
         message = " ".join([
