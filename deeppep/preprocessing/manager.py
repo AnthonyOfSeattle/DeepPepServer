@@ -3,42 +3,12 @@ from itertools import chain
 from fastapi import HTTPException
 from .encoder import SequenceEncoder
 
-GLOBAL_VOCAB = {
-    "X": 0,
-    "n[42]": 1,
-    "A": 2,
-    "C": 3,
-    "C[57]": 3,
-    "D": 4,
-    "E": 5,
-    "F": 6,
-    "G": 7,
-    "H": 8,
-    "I": 9,
-    "K": 10,
-    "L": 11,
-    "M": 12,
-    "N": 13,
-    "P": 14,
-    "Q": 15,
-    "R": 16,
-    "S": 17,
-    "T": 18,
-    "U": 19,
-    "V": 20,
-    "W": 21,
-    "Y": 22,
-    "M[16]": 23,
-}
-
 class PreprocessingManager:
-    def __init__(self, pattern, vocab=None, max_vocab_dim=23, **kwargs):
+    def __init__(self, pattern, vocab, max_vocab_dim, **kwargs):
         self.pattern = pattern
         
         self.max_vocab_dim = max_vocab_dim
-        self.vocab = GLOBAL_VOCAB.copy()
-        if vocab is not None:
-            self.vocab.update(vocab)
+        self.vocab = vocab
         self._check_vocab_dim()
         
         self.encoder = SequenceEncoder(pattern, self.vocab, **kwargs)
