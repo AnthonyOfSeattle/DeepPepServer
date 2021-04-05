@@ -1,0 +1,7 @@
+{
+  "model_name"     : "standard_charge",
+  "property"       : "charge",
+  "output_labels"  : ["z1", "z2", "z3", "z4", "z5"],
+  "allow_encoding" : true,
+  "public"         : true
+}

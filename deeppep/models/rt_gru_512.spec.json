@@ -1,0 +1,7 @@
+{
+  "model_name"     : "standard_rt",
+  "property"       : "rt",
+  "output_labels"  : ["rt"],
+  "allow_encoding" : true,
+  "public"         : true
+}

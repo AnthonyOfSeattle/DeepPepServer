@@ -1,0 +1,12 @@
+{
+  "model_name"     : "phospho_charge",
+  "pre_config"     : {"vocab"         : {"S[80]": 24,
+                                         "T[80]": 25,
+                                         "Y[80]": 26},
+                      "max_vocab_dim" : 26,
+                      "seq_len"       : 75},
+  "property"       : "charge",
+  "output_labels"  : ["z1", "z2", "z3", "z4", "z5"],
+  "allow_encoding" : true,
+  "public"         : true
+}
