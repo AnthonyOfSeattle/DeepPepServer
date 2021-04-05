@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/usr/bin/time -v \
+gunicorn --config ./server_config.py \
+	 deeppep:app
