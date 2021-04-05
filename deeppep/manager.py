@@ -1,19 +1,17 @@
 from fastapi import HTTPException
 from .types import *
-from .preprocessing import (
-        DEFAULT_PREPROCESSING_CONFIG,
-        merge_configs,
-        PreprocessingManager
-        )
-from .prediction import PREBUILT_CONFIG, PredictionManager
+from .preprocessing import PreprocessingManager
+from .prediction import PredictionManager
+from .types import PreprocessingConfig
+from .util import get_model_info, merge_configs
 
 class PipelineManager:
     def __init__(self, model_name, user_config=None):
         self.model_name = model_name
         self.model_config = self._get_model_config(self.model_name)
-        self.pre_config = DEFAULT_PREPROCESSING_CONFIG
+        self.pre_config = PreprocessingConfig()
         self.pre_config = merge_configs(self.pre_config,
-                                        self.model_config.get("pre_config", {})
+                                        self.model_config.pre_config
                                        )
         if user_config is not None:
            self.pre_config = merge_configs(self.pre_config,
@@ -31,15 +29,16 @@ class PipelineManager:
         return message
 
     def _get_model_config(self, model_name):
-        if not model_name in PREBUILT_CONFIG:
+        model_info = get_model_info()
+        if not model_name in model_info:
             raise HTTPException(status_code = 404,
                                 detail = self._model_missing_message(model_name)
                                 )
 
-        return PREBUILT_CONFIG[model_name]
+        return model_info[model_name]
 
     def _preprocess_peptides(self, peptides):
-        pre_manager = PreprocessingManager(**self.pre_config)
+        pre_manager = PreprocessingManager(**self.pre_config.dict())
         peptides = pre_manager.preprocess(
             [pep.sequence for pep in peptides]
         )
@@ -48,8 +47,8 @@ class PipelineManager:
 
     def _predict(self, enc_peptides):
         pred_manager = PredictionManager(model_name=self.model_name,
-                                         config_path=self.model_config["config_path"],
-                                         weight_path=self.model_config["weight_path"])
+                                         config_path=self.model_config.config_path,
+                                         weight_path=self.model_config.weight_path)
 
         predictions = pred_manager.predict(enc_peptides)
         return predictions
@@ -75,7 +74,7 @@ class PipelineManager:
             predictions = self._predict(enc_peptides)
             output = self._build_output(peptides, 
                                         predictions, 
-                                        self.model_config["output_labels"])
+                                        self.model_config.output_labels)
 
         else:
             predictions = [[1, 2, 3, 4, 5]]*len(peptides) 
