@@ -1,6 +1,7 @@
 import os
 import tensorflow as tf
 from tensorflow.keras import models, backend
+from fastapi import HTTPException
 
 tf.get_logger().setLevel('ERROR')
 
