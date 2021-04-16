@@ -47,18 +47,3 @@ def get_model_info():
 
     return model_info
 
-def merge_configs(left, right):
-    # Copy to maintain read only
-    left_dict = left.dict()
-    right_dict = right.dict()
-
-    # Pop out vocab dict and copy
-    merged_vocab = left_dict.pop("vocab").copy()
-    merged_vocab.update(right_dict.pop("vocab"))
-
-    # Create final merged config
-    merged = left_dict
-    merged.update(right_dict)
-    merged["vocab"] = merged_vocab
-
-    return PreprocessingConfig(**merged)

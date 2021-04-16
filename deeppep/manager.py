@@ -1,9 +1,8 @@
 from fastapi import HTTPException
-from .types import *
+from .types import Action, PreprocessingConfig, merge_configs
+from .config import get_model_info
 from .preprocessing import PreprocessingManager
 from .prediction import PredictionManager
-from .types import PreprocessingConfig
-from .util import get_model_info, merge_configs
 
 class PipelineManager:
     def __init__(self, model_name, user_config=None):
