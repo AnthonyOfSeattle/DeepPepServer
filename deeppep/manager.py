@@ -36,6 +36,11 @@ class PipelineManager:
 
         return model_info[model_name]
 
+    def _check_encoding_permission(self):
+        if not self.model_config.allow_encoding:
+            raise HTTPException(status_code = 404,
+                                detail = "Resource's encodings are not available")
+
     def _preprocess_peptides(self, peptides):
         pre_manager = PreprocessingManager(**self.pre_config.dict())
         peptides = pre_manager.preprocess(
@@ -84,6 +89,7 @@ class PipelineManager:
                                         self.model_config.output_labels)
 
         else:
+            self._check_encoding_permission()
             encodings = self._encode(enc_peptides) 
             output = self._build_output(peptides, encodings)
 
