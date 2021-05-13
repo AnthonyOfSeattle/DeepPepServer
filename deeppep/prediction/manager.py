@@ -55,3 +55,10 @@ class PredictionManager:
     def predict(self, input):
         output = self.model.predict(input)
         return output
+
+    def encode(self, input):
+        output = input
+        for l in self.model.layers[:-1]:
+            output = l(output)
+
+        return output.numpy()

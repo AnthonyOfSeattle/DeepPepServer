@@ -52,9 +52,17 @@ class PipelineManager:
         predictions = pred_manager.predict(enc_peptides)
         return predictions
 
+    def _encode(self, enc_peptides):
+        pred_manager = PredictionManager(model_name=self.model_name,
+                                         config_path=self.model_config.config_path,
+                                         weight_path=self.model_config.weight_path)
+
+        encodings = pred_manager.encode(enc_peptides)
+        return encodings
+
     def _build_output(self, peptides, predictions, output_labels=None):
         if output_labels is None:
-            output = [{"values" : pred} for pred in predictions]
+            output = [{"values" : pred} for pred in predictions.tolist()]
 
         else:
             output = []
@@ -76,8 +84,8 @@ class PipelineManager:
                                         self.model_config.output_labels)
 
         else:
-            predictions = [[1, 2, 3, 4, 5]]*len(peptides) 
-            output = self._build_output(peptides, predictions)
+            encodings = self._encode(enc_peptides) 
+            output = self._build_output(peptides, encodings)
 
         return output
 
