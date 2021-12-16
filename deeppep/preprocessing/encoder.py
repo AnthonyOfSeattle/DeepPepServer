@@ -79,10 +79,11 @@ class SequenceEncoder(TransformerMixin):
 
         """
         new_vocab = {}
-        index_start = max(self.vocab.values()) + 1 if self.vocab else 1
-        for ind, tok in enumerate(input, index_start):
+        next_index = max(self.vocab.values()) + 1 if self.vocab else 1
+        for tok in input:
             if tok not in self.vocab:
-                new_vocab[tok] = ind
+                new_vocab[tok] = next_index
+                next_index += 1
 
         return new_vocab
 
