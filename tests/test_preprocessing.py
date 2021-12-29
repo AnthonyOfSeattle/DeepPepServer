@@ -1,3 +1,5 @@
+import pytest
+from fastapi import HTTPException
 from deeppep import preprocessing
 
 
@@ -74,3 +76,45 @@ class TestSequenceEncoder:
                                     "BEE[20]AC[10]CAAD"])
         assert output.tolist() == [[4, 2, 2, 3, 1, 5, 0, 0, 0],
                                    [2, 0, 0, 1, 4, 3, 1, 1, 5]]
+
+
+class TestPreprocessingManager:
+    def test_initialize(self):
+        # Test that class can be initialized and components are presents
+        true_pattern = "\w"
+        true_vocab = {"A" : 1,
+                      "B" : 2,
+                      "C" : 3}
+        manager = preprocessing.PreprocessingManager(true_pattern, true_vocab, 3)
+        assert manager.pattern == true_pattern
+        assert manager.vocab == true_vocab
+
+    @pytest.mark.xfail(raises=HTTPException)
+    def test_vocab_too_big(self):
+        # Test that the manager recognizes when the vocab is too large
+        true_pattern = "\w"
+        true_vocab = {"A" : 1,
+                      "B" : 2,
+                      "C" : 3}
+        manager = preprocessing.PreprocessingManager(true_pattern, true_vocab, 2)
+
+    @pytest.mark.xfail(raises=HTTPException)
+    def test_consistency_checker(self):
+        # Test that the manager recognizes when the vocab is too large
+        true_pattern = "\w"
+        true_vocab = {"A" : 1,
+                      "B" : 2,
+                      "C" : 3}
+        manager = preprocessing.PreprocessingManager(true_pattern, true_vocab, 2)
+        manager._check_consistency(["ABCD"])
+
+    def test_pipeline(self):
+        # Test integer encoding
+        true_pattern = "\w"
+        true_vocab = {"A" : 1,
+                      "B" : 2,
+                      "C" : 3}
+        manager = preprocessing.PreprocessingManager(true_pattern, true_vocab, 3, seq_len=10) 
+        output = manager.preprocess("BACBCA")
+        assert output.tolist() == [[2, 1, 3, 2, 3, 1, 0, 0, 0, 0]]
+
