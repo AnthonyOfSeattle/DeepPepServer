@@ -11,5 +11,7 @@ services:
         window: 30s
     ports:
       - "8000:80"
-    volumes:
-      - './models/PhosphopediaModels/production:/models'
+    
+    # Uncomment in order to inject a model dir
+    # volumes:
+    ###   - /path/to/models:/models
